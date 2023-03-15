@@ -53,18 +53,18 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         h.right.color = !h.right.color;
     }
 
-    public void put(K key, V value) {
+    public void insert(K key, V value) {
         if (key == null) throw new IllegalArgumentException("Key cannot be null");
-        root = put(root, key, value);
+        root = insert(root, key, value);
         root.color = BLACK;
     }
 
-    private Node put(Node h, K key, V value) {
+    private Node insert(Node h, K key, V value) {
         if (h == null) return new Node(key, value);
 
         int cmp = key.compareTo(h.key);
-        if (cmp < 0) h.left = put(h.left, key, value);
-        else if (cmp > 0) h.right = put(h.right, key, value);
+        if (cmp < 0) h.left = insert(h.left, key, value);
+        else if (cmp > 0) h.right = insert(h.right, key, value);
         else h.value = value;
 
         if (isRed(h.right) && !isRed(h.left)) h = rotateLeft(h);
@@ -74,7 +74,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         return h;
     }
 
-    public V get(K key) {
+    public V search(K key) {
         if (key == null) throw new IllegalArgumentException("Key cannot be null");
         Node x = root;
         while (x != null) {
@@ -87,4 +87,8 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     }
 
     // Implement additional methods such as deletion, size, etc., if needed.
+    public V delete(K key){
+        return null;
+    }
+
 }
