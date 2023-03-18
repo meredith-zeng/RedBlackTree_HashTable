@@ -27,7 +27,7 @@ public class ThreadSafeRedBlackTreeHashTable<K extends Comparable<K>, V> {
         ReentrantReadWriteLock.ReadLock readLock = locks[index].readLock();
         readLock.lock();
         try {
-            return hashTable[index].search(key);
+            return hashTable[index].get(key);
         } finally {
             readLock.unlock();
         }

@@ -7,6 +7,7 @@ public class main {
         hashTable.put(2, 2);
         int val = hashTable.get(1);
         System.out.println(val);
+        System.out.println(hashTable.get(2));
 
     }
 }
