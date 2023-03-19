@@ -54,5 +54,8 @@ public class ThreadSafeRedBlackTreeHashTable<K extends Comparable<K>, V> {
             writeLock.unlock();
         }
     }
+    public int getSize(){
+        return size;
+    }
 }
 
