@@ -1,6 +1,6 @@
 package Performance;
 import hashtable.HashTable;
-import RBTable.ThreadSafeRedBlackTreeHashTable;
+import RBTable.RBTreeHashTable;
 import java.util.Random;
 
 public class Test {
@@ -37,7 +37,7 @@ public class Test {
     }
     public static void RBTablePerformance(String[] args){
         // create a HashMap with a large initial capacity to avoid resizing during the test
-        ThreadSafeRedBlackTreeHashTable<Integer, Integer> map = new ThreadSafeRedBlackTreeHashTable<>(1000000);
+        RBTreeHashTable<Integer, Integer> map = new RBTreeHashTable<>(1000000);
 
         // populate the map with random key-value pairs
         Random rand = new Random();
@@ -69,7 +69,7 @@ public class Test {
         final int TABLE_SIZE = 1000000;
 
         // create a HashMap
-        final ThreadSafeRedBlackTreeHashTable<Integer, Integer> map = new ThreadSafeRedBlackTreeHashTable<>(TABLE_SIZE);
+        final RBTreeHashTable<Integer, Integer> map = new RBTreeHashTable<>(TABLE_SIZE);
 
         // populate the map with random key-value pairs
         Random rand = new Random();

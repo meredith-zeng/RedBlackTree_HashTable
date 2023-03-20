@@ -2,13 +2,13 @@ package RBTable;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class ThreadSafeRedBlackTreeHashTable<K extends Comparable<K>, V> {
+public class RBTreeHashTable<K extends Comparable<K>, V> {
     private final int size;
     private final RedBlackTree<K, V>[] hashTable;
     private final ReentrantReadWriteLock[] locks;
 
     @SuppressWarnings("unchecked")
-    public ThreadSafeRedBlackTreeHashTable(int size) {
+    public RBTreeHashTable(int size) {
         this.size = size;
         hashTable = (RedBlackTree<K, V>[]) new RedBlackTree[size];
         locks = new ReentrantReadWriteLock[size];
