@@ -3,7 +3,8 @@ package RBTable;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class RedWriteLockHashTable<K extends Comparable<K>, V> extends Dictionary<K, V> {
+public class RedWriteLockHashTable<K extends Comparable<K>, V>
+        extends Dictionary<K, V> {
     private RedBlackTree<K, V>[] table;
     private ReentrantReadWriteLock[] locks;
 

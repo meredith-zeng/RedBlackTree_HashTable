@@ -34,11 +34,142 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         return ans;
     }
 
+    private boolean isRed(RBTreeNode node) {
+        // null node is black
+        if (node == null){
+            return false;
+        }
+        return node.isRed();
+    }
+
     public V get(K key) {
         if (key == null) {
             throw new IllegalArgumentException("Key cannot be null");
         }
         return getNode(root, key);
+    }
+    private V getNode(RBTreeNode x, K key) {
+        while (x != null) {
+            int cmp = key.compareTo((K) x.key);
+            if (cmp < 0){
+                x = x.left;
+            } else if (cmp > 0){
+                x = x.right;
+            } else {
+                return (V) x.value;
+            }
+        }
+        return null;
+    }
+
+    public V delete(K key) {
+        if (key == null){
+            throw new IllegalArgumentException("Key cannot be null");
+        }
+        if (!contains(key)){
+            return null;
+        }
+
+        V deletedValue = (V) get(key);
+        if (!isRed(root.left) && !isRed(root.right)){
+            root.color = RED;
+        }
+        root = deleteNode(root, key);
+        if (root != null) {
+            root.color = BLACK;
+        }
+        return deletedValue;
+    }
+    private boolean contains(K key) {
+        return get(key) != null;
+    }
+    private RBTreeNode deleteNode(RBTreeNode node, K key) {
+        // The return value is negative if the current object is less than the input object
+        if (key.compareTo((K) node.key) < 0) {
+            if (!isRed(node.left) && !isRed(node.left.left)){
+                node = moveRedLeft(node);
+            }
+            node.left = deleteNode(node.left, key);
+        } else {
+            if (isRed(node.left)){
+                node = rotateRight(node);
+            }
+            // equal key
+            if (key.compareTo((K) node.key) == 0
+                    && (node.right == null)){
+                return null;
+            }
+            if (!isRed(node.right) && !isRed(node.right.left)) {
+                node = moveRedRight(node);
+            }
+            if (key.compareTo((K) node.key) == 0) {
+                K curMin = (K) getMin(node.right).key;
+                node.value = getNode(node.right, curMin);
+                node.key = getMin(node.right).key;
+                node.right = deleteMin(node.right);
+            } else {
+                node.right = deleteNode(node.right, key);
+            }
+
+        }
+        return fixUp(node);
+    }
+
+    private RBTreeNode moveRedLeft(RBTreeNode node) {
+        flipColors(node);
+        if (isRed(node.right.left)) {
+            node.right = rotateRight(node.right);
+            node = rotateLeft(node);
+        }
+        return node;
+    }
+    private RBTreeNode moveRedRight(RBTreeNode node) {
+        flipColors(node);
+        if (isRed(node.left.left)) {
+            node = rotateRight(node);
+        }
+        return node;
+    }
+    private void flipColors(RBTreeNode node) {
+        node.color = !node.color;
+        if(node.left != null){
+            node.left.color = !node.left.color;
+        }
+        if(node.right != null){
+            node.right.color = !node.right.color;
+        }
+    }
+    private RBTreeNode rotateLeft(RBTreeNode node) {
+        RBTreeNode x = node.right;
+        node.right = x.left;
+        x.left = node;
+        x.color = node.color;
+        node.color = RED;
+        return x;
+    }
+    private RBTreeNode rotateRight(RBTreeNode node) {
+        RBTreeNode x = node.left;
+        node.left = x.right;
+        x.right = node;
+        x.color = node.color;
+        node.color = RED;
+        return x;
+    }
+    private RBTreeNode deleteMin(RBTreeNode node) {
+        if (node.left == null){
+            return null;
+        }
+        if (!isRed(node.left) && !isRed(node.left.left)){
+            node = moveRedLeft(node);
+        }
+        node.left = deleteMin(node.left);
+        return fixUp(node);
+    }
+    private RBTreeNode getMin(RBTreeNode node) {
+        if (node.left == null){
+            return node;
+        }
+        return getMin(node.left);
     }
 
     public void insert(K key, V value) {
@@ -48,60 +179,6 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         root = insertNode(root, key, value);
         root.color = BLACK;
     }
-
-    public V delete(K key) {
-        if (key == null) throw new IllegalArgumentException("Key cannot be null");
-        if (!contains(key)){
-            return null;
-        }
-
-        V deletedValue = (V) get(key);
-        if (!isRed(root.left) && !isRed(root.right)){
-            root.color = RED;
-        }
-        root = delete(root, key);
-        if (root != null) {
-            root.color = BLACK;
-        }
-        return deletedValue;
-    }
-
-    private RBTreeNode rotateLeft(RBTreeNode node) {
-        RBTreeNode x = node.right;
-        node.right = x.left;
-        x.left = node;
-        x.color = node.color;
-        node.color = RED;
-        return x;
-    }
-
-    private RBTreeNode rotateRight(RBTreeNode node) {
-        RBTreeNode x = node.left;
-        node.left = x.right;
-        x.right = node;
-        x.color = node.color;
-        node.color = RED;
-        return x;
-    }
-
-    private void flipColors(RBTreeNode node) {
-        node.color = !node.color;
-        if(node.left != null){
-            node.left.color = !node.left.color;
-        }
-        if(node.right != null){
-            node.right.color = !node.right.color;
-        }
-
-    }
-
-    private boolean isRed(RBTreeNode node) {
-        if (node == null){
-            return false;
-        }
-        return node.isRed();
-    }
-
     private RBTreeNode insertNode(RBTreeNode node, K key, V value) {
         if (node == null) return new RBTreeNode(key, value);
 
@@ -126,7 +203,6 @@ public class RedBlackTree<K extends Comparable<K>, V> {
 
         return node;
     }
-
     private RBTreeNode fixUp(RBTreeNode x) {
         if (isRed(x.right)){
             x = rotateLeft(x);
@@ -139,83 +215,4 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         }
         return x;
     }
-
-    private RBTreeNode moveRedLeft(RBTreeNode node) {
-        flipColors(node);
-        if (isRed(node.right.left)) {
-            node.right = rotateRight(node.right);
-            node = rotateLeft(node);
-        }
-        return node;
-    }
-
-    private RBTreeNode moveRedRight(RBTreeNode node) {
-        flipColors(node);
-        if (isRed(node.left.left)) {
-            node = rotateRight(node);
-        }
-        return node;
-    }
-
-    private RBTreeNode deleteMin(RBTreeNode node) {
-        if (node.left == null){
-            return null;
-        }
-        if (!isRed(node.left) && !isRed(node.left.left)){
-            node = moveRedLeft(node);
-        }
-        node.left = deleteMin(node.left);
-        return fixUp(node);
-    }
-
-    private RBTreeNode getMin(RBTreeNode node) {
-        if (node.left == null) return node;
-        return getMin(node.left);
-    }
-
-    private RBTreeNode delete(RBTreeNode node, K key) {
-        if (key.compareTo((K) node.key) < 0) {
-            if (!isRed(node.left) && !isRed(node.left.left)) node = moveRedLeft(node);
-            node.left = delete(node.left, key);
-        } else {
-            if (isRed(node.left)){
-                node = rotateRight(node);
-            }
-            if (key.compareTo((K) node.key) == 0 && (node.right == null)){
-                return null;
-            }
-            if (!isRed(node.right) && !isRed(node.right.left)) {
-                node = moveRedRight(node);
-            }
-            if (key.compareTo((K) node.key) == 0) {
-                node.value = getNode(node.right, (K) getMin(node.right).key);
-                node.key = getMin(node.right).key;
-                node.right = deleteMin(node.right);
-            } else {
-                node.right = delete(node.right, key);
-            }
-
-        }
-        return fixUp(node);
-    }
-
-    private V getNode(RBTreeNode x, K key) {
-        while (x != null) {
-            int cmp = key.compareTo((K) x.key);
-            if (cmp < 0){
-                x = x.left;
-            } else if (cmp > 0){
-                x = x.right;
-            } else {
-                return (V) x.value;
-            }
-        }
-        return null;
-    }
-
-    private boolean contains(K key) {
-        return get(key) != null;
-    }
-
-
 }
