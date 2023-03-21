@@ -112,9 +112,9 @@ public class Test {
 
         // output the size of the map
         System.out.println("ideal Map size: " + TABLE_SIZE);
-        System.out.println("actual Map size: " + map.getSize());
-        System.out.println("safety loss : " + (TABLE_SIZE-map.getSize()));
-        if(map.getSize()==TABLE_SIZE){
+        System.out.println("actual Map size: " + map.size());
+        System.out.println("safety loss : " + (TABLE_SIZE-map.size()));
+        if(map.size()==TABLE_SIZE){
             System.out.println("The Table is Thread-safe!");
         }
     }
