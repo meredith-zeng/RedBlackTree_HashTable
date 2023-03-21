@@ -1,6 +1,7 @@
 package RBTable;
 
-public class RBTreeNode<K, V> {
+
+public class RBTreeNode<K, V>{
     public static final boolean RED = true;
     public static final boolean BLACK = false;
 

@@ -1,15 +1,15 @@
 package Performance;
-import RBTable.SynchronizedTable;
 import RBTable.RBTreeHashTable;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Random;
 
 public class Test {
 
     public static void HashTablePerformance(String[] args){
         // create a HashMap with a large initial capacity to avoid resizing during the test
-        SynchronizedTable<Integer, Integer> map = new SynchronizedTable<>(1000000);
+        Hashtable<Integer, Integer> map = new Hashtable<>(1000000);
 
         // populate the map with random key-value pairs
         Random rand = new Random();

@@ -1,10 +1,42 @@
 package RBTable;
 
 
+import sun.misc.Queue;
+
+import java.awt.*;
+import java.util.Deque;
+import java.util.LinkedList;
+
 public class RedBlackTree<K extends Comparable<K>, V> {
     public static final boolean RED = true;
     public static final boolean BLACK = false;
     private RBTreeNode<K, V> root;
+
+    public RBTreeNode<K, V>[] traverseWholeTree(){
+        LinkedList<RBTreeNode> list = new LinkedList<>();
+        RBTreeNode<K, V> cur = root;
+        if(root == null){
+            return new RBTreeNode[0];
+        }
+        Deque<RBTreeNode<K, V>> queue = new LinkedList<>();
+
+        queue.offer(cur);
+        while (!queue.isEmpty()){
+            RBTreeNode<K, V> node = queue.poll();
+            list.add(node);
+            if(node.left != null){
+                queue.offer(node.left);
+            }
+            if(node.right != null){
+                queue.offer(node.right);
+            }
+        }
+        RBTreeNode<K, V>[] ans = new RBTreeNode[list.size()];
+        for(int i = 0; i < list.size(); i++){
+            ans[i] = list.get(i);
+        }
+        return ans;
+    }
 
     public V get(K key) {
         if (key == null) throw new IllegalArgumentException("Key cannot be null");
@@ -184,9 +216,6 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     private boolean contains(K key) {
         return get(key) != null;
     }
-
-
-
 
 
 }

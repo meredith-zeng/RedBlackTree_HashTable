@@ -84,7 +84,7 @@ public class RBTreeHashTable<K extends Comparable<K>, V> extends Dictionary<K, V
 
     private void rehash() {
         int oldCapacity = table.length;
-        RedBlackTree<?,?>[] oldMap = table;
+        RedBlackTree<K,V>[] oldMap = table;
 
         // overflow-conscious code
         int newCapacity = (oldCapacity << 1) + 1;
@@ -95,13 +95,22 @@ public class RBTreeHashTable<K extends Comparable<K>, V> extends Dictionary<K, V
             newCapacity = MAX_ARRAY_SIZE;
         }
         RedBlackTree<?,?>[] newMap = new RedBlackTree<?,?>[newCapacity];
-
+        ReentrantReadWriteLock[] newLocks = new ReentrantReadWriteLock[newCapacity];
         threshold = (int)Math.min(newCapacity * loadFactor, MAX_ARRAY_SIZE + 1);
-        table = (RedBlackTree<K, V>[]) newMap;
 
+        for (int i = 0; i < newCapacity; i++) {
+            newMap[i] = new RedBlackTree<>();
+            newLocks[i] = new ReentrantReadWriteLock();
+        }
+        table = (RedBlackTree<K, V>[]) newMap;
+        locks = newLocks;
         for (int i = oldCapacity ; i-- > 0 ;) {
-            int index = (oldMap[i].hashCode() & 0x7FFFFFFF) % newCapacity;
-            newMap[index] = (RedBlackTree<K, V>) oldMap[i];
+            RBTreeNode<K, V>[] arr = oldMap[i].traverseWholeTree();
+            for(RBTreeNode<K, V> node : arr){
+                int index = (node.hashCode() & 0x7FFFFFFF) % newCapacity;
+                table[index].insert((K) node.key, (V) node.value);
+            }
+
         }
     }
 
@@ -133,5 +142,6 @@ public class RBTreeHashTable<K extends Comparable<K>, V> extends Dictionary<K, V
     public Enumeration<V> elements() {
         return null;
     }
+
 }
 
