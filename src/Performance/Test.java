@@ -18,10 +18,15 @@ public class Test {
         // populate the map with random key-value pairs
         Random rand = new Random();
         long startTime1 = System.nanoTime();
+        System.gc();
+        Runtime runtime = Runtime.getRuntime();
+        long before=runtime.totalMemory() - runtime.freeMemory();
         for (int i = 0; i < 1000000; i++) {
             map.put(rand.nextInt(1000000), rand.nextInt(1000000));
 
         }
+        long after=runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " +(after-before));
         long endTime1 = System.nanoTime();
         putDiscrepancy-=(endTime1 - startTime1) / 1000000.0;
         System.out.println("Total Time taken(HashTable put function): " + (endTime1 - startTime1) / 1000000.0 + " milliseconds");
@@ -50,9 +55,15 @@ public class Test {
         // populate the map with random key-value pairs
         Random rand = new Random();
         long startTime1 = System.nanoTime();
+        System.gc();
+        Runtime runtime = Runtime.getRuntime();
+        long before=runtime.totalMemory() - runtime.freeMemory();
         for (int i = 0; i < 1000000; i++) {
             map.put(rand.nextInt(1000000), rand.nextInt(1000000));
+
         }
+        long after=runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " +(after-before));
         long endTime1 = System.nanoTime();
         putDiscrepancy+=(endTime1 - startTime1) / 1000000.0;
         System.out.println("Total Time taken(RBTable put function): " + (endTime1 - startTime1) / 1000000.0 + " milliseconds");
@@ -82,9 +93,15 @@ public class Test {
         // populate the map with random key-value pairs
         Random rand = new Random();
         long startTime1 = System.nanoTime();
+        System.gc();
+        Runtime runtime = Runtime.getRuntime();
+        long before=runtime.totalMemory() - runtime.freeMemory();
         for (int i = 0; i < 1000000; i++) {
             map.put(rand.nextInt(1000000), rand.nextInt(1000000));
+
         }
+        long after=runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " +(after-before));
         long endTime1 = System.nanoTime();
         putDiscrepancy+=(endTime1 - startTime1) / 1000000.0;
         System.out.println("Total Time taken(SynchronizedTable put function): " + (endTime1 - startTime1) / 1000000.0 + " milliseconds");
@@ -114,9 +131,15 @@ public class Test {
         // populate the map with random key-value pairs
         Random rand = new Random();
         long startTime1 = System.nanoTime();
+        System.gc();
+        Runtime runtime = Runtime.getRuntime();
+        long before=runtime.totalMemory() - runtime.freeMemory();
         for (int i = 0; i < 1000000; i++) {
             map.put(rand.nextInt(1000000), rand.nextInt(1000000));
+
         }
+        long after=runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " +(after-before));
         long endTime1 = System.nanoTime();
         putDiscrepancy+=(endTime1 - startTime1) / 1000000.0;
         System.out.println("Total Time taken(WithoutRehashTable put function): " + (endTime1 - startTime1) / 1000000.0 + " milliseconds");
@@ -193,8 +216,8 @@ public class Test {
             System.out.println();
             HashTablePerformance(args);
             //RBTablePerformance(args);
-            //SynchronizedTablePerformance(args);
-            WithoutRehashTablePerformance(args);
+            SynchronizedTablePerformance(args);
+            //WithoutRehashTablePerformance(args);
             System.out.println();
         }
         System.out.println("******************************Total Discrepancy:**********************************");
@@ -203,7 +226,9 @@ public class Test {
         System.out.println("Average Discrepancy of Remove() function: " + removeDiscrepancy/TEST_ROUND+ " milliseconds");
         System.out.println();
         System.out.println("******************************Testing the Thread Safety::**********************************");
-        ThreadSafetyPerformance();
+
+
+        //ThreadSafetyPerformance();
     }
 }
 
