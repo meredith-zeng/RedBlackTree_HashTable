@@ -1,9 +1,5 @@
 package RBTable;
 
-
-import sun.misc.Queue;
-
-import java.awt.*;
 import java.util.Deque;
 import java.util.LinkedList;
 
@@ -39,12 +35,16 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     }
 
     public V get(K key) {
-        if (key == null) throw new IllegalArgumentException("Key cannot be null");
+        if (key == null) {
+            throw new IllegalArgumentException("Key cannot be null");
+        }
         return getNode(root, key);
     }
 
     public void insert(K key, V value) {
-        if (key == null) throw new IllegalArgumentException("Key cannot be null");
+        if (key == null) {
+            throw new IllegalArgumentException("Key cannot be null");
+        }
         root = insertNode(root, key, value);
         root.color = BLACK;
     }

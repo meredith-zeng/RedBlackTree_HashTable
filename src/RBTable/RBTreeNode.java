@@ -1,13 +1,12 @@
 package RBTable;
 
-
 public class RBTreeNode<K, V>{
     public static final boolean RED = true;
     public static final boolean BLACK = false;
 
     public K key;
     public V value;
-    RBTreeNode left, right;
+    RBTreeNode<K, V> left, right;
     boolean color;
 
     RBTreeNode(K key, V value) {
