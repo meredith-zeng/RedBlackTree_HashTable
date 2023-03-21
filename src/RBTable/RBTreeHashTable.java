@@ -1,64 +1,64 @@
 package RBTable;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class RBTreeHashTable<K extends Comparable<K>, V> implements Map<K,V> {
-    private final int size;
-    private final RedBlackTree<K, V>[] hashTable;
-    private final ReentrantReadWriteLock[] locks;
+public class RBTreeHashTable<K extends Comparable<K>, V> extends Dictionary<K, V> {
+    private RedBlackTree<K, V>[] table;
+    private ReentrantReadWriteLock[] locks;
 
-    @SuppressWarnings("unchecked")
-    public RBTreeHashTable(int size) {
-        this.size = size;
-        hashTable = (RedBlackTree<K, V>[]) new RedBlackTree[size];
-        locks = new ReentrantReadWriteLock[size];
-        for (int i = 0; i < size; i++) {
-            hashTable[i] = new RedBlackTree<>();
-            locks[i] = new ReentrantReadWriteLock();
-        }
-    }
+    private int nodeCnt;
+    private int capacity;
+    private float loadFactor = 0.75f;
+    private int threshold;
 
-    private int hash(K key) {
-        return (key.hashCode() & 0x7fffffff) % size;
-    }
-
-    public V get(K key) {
-        int index = hash(key);
-        ReentrantReadWriteLock.ReadLock readLock = locks[index].readLock();
-        readLock.lock();
-        try {
-            return hashTable[index].get(key);
-        } finally {
-            readLock.unlock();
-        }
-    }
+    private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
     @Override
     public int size() {
-        return 0;
+        return this.nodeCnt;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return this.nodeCnt == 0;
     }
 
-    @Override
-    public boolean containsKey(Object key) {
-        return false;
+    public RBTreeHashTable(int cap) {
+        if (cap <= 0) {
+            throw new IllegalArgumentException("Negative Capacity or zero" + cap);
+        }
+        if (cap < 7) {
+            cap = 7;
+        }
+        this.table = (RedBlackTree<K, V>[]) new RedBlackTree[cap];
+        this.locks = new ReentrantReadWriteLock[cap];
+        for (int i = 0; i < cap; i++) {
+            table[i] = new RedBlackTree<>();
+            locks[i] = new ReentrantReadWriteLock();
+        }
+        this.capacity = cap;
+        threshold = (int)Math.min(cap * loadFactor, MAX_ARRAY_SIZE + 1);
     }
 
-    @Override
-    public boolean containsValue(Object value) {
-        return false;
+    public RBTreeHashTable() {
+        this(7);
+    }
+
+    private int hash(K key) {
+        return (key.hashCode() & 0x7fffffff) % capacity;
     }
 
     @Override
     public V get(Object key) {
-        return null;
+        int index = hash((K) key);
+        ReentrantReadWriteLock.ReadLock readLock = locks[index].readLock();
+        readLock.lock();
+        try {
+            return table[index].get((K) key);
+        } finally {
+            readLock.unlock();
+        }
     }
 
     @Override
@@ -68,57 +68,70 @@ public class RBTreeHashTable<K extends Comparable<K>, V> implements Map<K,V> {
         writeLock.lock();
         boolean opFlag = false;
         try {
-            hashTable[index].insert(key, value);
+            table[index].insert(key, value);
         } finally {
             writeLock.unlock();
             opFlag = true;
+            nodeCnt++;
+        }
+        RedBlackTree<?,?> tab[] = table;
+        if (nodeCnt >= threshold) {
+            // Rehash the table if the threshold is exceeded
+            rehash();
         }
         return opFlag ? value : null;
     }
 
+    private void rehash() {
+        int oldCapacity = table.length;
+        RedBlackTree<?,?>[] oldMap = table;
+
+        // overflow-conscious code
+        int newCapacity = (oldCapacity << 1) + 1;
+        if (newCapacity - MAX_ARRAY_SIZE > 0) {
+            if (oldCapacity == MAX_ARRAY_SIZE)
+                // Keep running with MAX_ARRAY_SIZE buckets
+                return;
+            newCapacity = MAX_ARRAY_SIZE;
+        }
+        RedBlackTree<?,?>[] newMap = new RedBlackTree<?,?>[newCapacity];
+
+        threshold = (int)Math.min(newCapacity * loadFactor, MAX_ARRAY_SIZE + 1);
+        table = (RedBlackTree<K, V>[]) newMap;
+
+        for (int i = oldCapacity ; i-- > 0 ;) {
+            int index = (oldMap[i].hashCode() & 0x7FFFFFFF) % newCapacity;
+            newMap[index] = (RedBlackTree<K, V>) oldMap[i];
+        }
+    }
 
     @Override
     public V remove(Object key) {
-        return null;
-    }
-
-    @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
-
-    }
-
-    @Override
-    public void clear() {
-
-    }
-
-    @Override
-    public Set<K> keySet() {
-        return null;
-    }
-
-    @Override
-    public Collection<V> values() {
-        return null;
-    }
-
-    @Override
-    public Set<Entry<K, V>> entrySet() {
-        return null;
-    }
-
-    public void remove(K key) {
-        int index = hash(key);
+        int index = hash((K) key);
         ReentrantReadWriteLock.WriteLock writeLock = locks[index].writeLock();
         writeLock.lock();
+        boolean writeFlag = false;
+        V preVal = null;
         try {
-            hashTable[index].delete(key);
+            preVal = table[index].delete((K) key);
         } finally {
             writeLock.unlock();
+            writeFlag = true;
+            nodeCnt--;
         }
+        return writeFlag ? preVal : null;
     }
-    public int getSize(){
-        return size;
+
+
+    // do not include in term project range
+    @Override
+    public Enumeration<K> keys() {
+        return null;
+    }
+
+    @Override
+    public Enumeration<V> elements() {
+        return null;
     }
 }
 

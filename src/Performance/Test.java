@@ -1,5 +1,5 @@
 package Performance;
-import hashtable.HashTable;
+import RBTable.SynchronizedTable;
 import RBTable.RBTreeHashTable;
 
 import java.util.HashMap;
@@ -9,13 +9,14 @@ public class Test {
 
     public static void HashTablePerformance(String[] args){
         // create a HashMap with a large initial capacity to avoid resizing during the test
-        HashTable<Integer, Integer> map = new HashTable<>(1000000);
+        SynchronizedTable<Integer, Integer> map = new SynchronizedTable<>(1000000);
 
         // populate the map with random key-value pairs
         Random rand = new Random();
         long startTime1 = System.nanoTime();
         for (int i = 0; i < 1000000; i++) {
             map.put(rand.nextInt(1000000), rand.nextInt(1000000));
+
         }
         long endTime1 = System.nanoTime();
         System.out.println("Total Time taken(HashTable put function): " + (endTime1 - startTime1) / 1000000.0 + " milliseconds");
@@ -103,8 +104,8 @@ public class Test {
         }
 
         // output the size of the map
-        System.out.println("Map size: " + map.getSize());
-        if(map.getSize()==TABLE_SIZE){
+        System.out.println("Map size: " + map.size());
+        if(map.size()==TABLE_SIZE){
             System.out.println("The Table is Thread-safe!");
         }
     }
