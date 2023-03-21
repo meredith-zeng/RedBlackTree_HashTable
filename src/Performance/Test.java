@@ -1,6 +1,8 @@
 package Performance;
 import hashtable.HashTable;
 import RBTable.RBTreeHashTable;
+
+import java.util.HashMap;
 import java.util.Random;
 
 public class Test {
@@ -111,6 +113,8 @@ public class Test {
         RBTablePerformance(args);
 
         ThreadSafetyPerformance();
+
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
     }
 }
 
