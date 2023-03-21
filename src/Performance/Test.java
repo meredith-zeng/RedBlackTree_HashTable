@@ -1,6 +1,8 @@
 package Performance;
-import hashtable.HashTable;
-import RBTable.ThreadSafeRedBlackTreeHashTable;
+import RBTable.RedWriteLockHashTable;
+
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Random;
 
 public class Test {
@@ -11,13 +13,14 @@ public class Test {
 
     public static void HashTablePerformance(String[] args){
         // create a HashMap with a large initial capacity to avoid resizing during the test
-        HashTable<Integer, Integer> map = new HashTable<>(1000000);
+        Hashtable<Integer, Integer> map = new Hashtable<>(1000000);
 
         // populate the map with random key-value pairs
         Random rand = new Random();
         long startTime1 = System.nanoTime();
         for (int i = 0; i < 1000000; i++) {
             map.put(rand.nextInt(1000000), rand.nextInt(1000000));
+
         }
         long endTime1 = System.nanoTime();
         putDiscrepancy-=(endTime1 - startTime1) / 1000000.0;
@@ -42,7 +45,7 @@ public class Test {
     }
     public static void RBTablePerformance(String[] args){
         // create a HashMap with a large initial capacity to avoid resizing during the test
-        ThreadSafeRedBlackTreeHashTable<Integer, Integer> map = new ThreadSafeRedBlackTreeHashTable<>(1000000);
+        RedWriteLockHashTable<Integer, Integer> map = new RedWriteLockHashTable<>(1000000);
 
         // populate the map with random key-value pairs
         Random rand = new Random();
@@ -76,7 +79,7 @@ public class Test {
         final int TABLE_SIZE = 1000000;
 
         // create a HashMap
-        final ThreadSafeRedBlackTreeHashTable<Integer, Integer> map = new ThreadSafeRedBlackTreeHashTable<>(TABLE_SIZE);
+        final RedWriteLockHashTable<Integer, Integer> map = new RedWriteLockHashTable<>(TABLE_SIZE);
 
         // populate the map with random key-value pairs
         Random rand = new Random();
@@ -133,6 +136,8 @@ public class Test {
         System.out.println();
         System.out.println("******************************Testing the Thread Safety::**********************************");
         ThreadSafetyPerformance();
+
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
     }
 }
 
