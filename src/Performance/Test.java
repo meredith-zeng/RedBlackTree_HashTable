@@ -1,5 +1,5 @@
 package Performance;
-import RBTable.RBTreeHashTable;
+import RBTable.RedWriteLockHashTable;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -40,7 +40,7 @@ public class Test {
     }
     public static void RBTablePerformance(String[] args){
         // create a HashMap with a large initial capacity to avoid resizing during the test
-        RBTreeHashTable<Integer, Integer> map = new RBTreeHashTable<>(1000000);
+        RedWriteLockHashTable<Integer, Integer> map = new RedWriteLockHashTable<>(1000000);
 
         // populate the map with random key-value pairs
         Random rand = new Random();
@@ -72,7 +72,7 @@ public class Test {
         final int TABLE_SIZE = 1000000;
 
         // create a HashMap
-        final RBTreeHashTable<Integer, Integer> map = new RBTreeHashTable<>(TABLE_SIZE);
+        final RedWriteLockHashTable<Integer, Integer> map = new RedWriteLockHashTable<>(TABLE_SIZE);
 
         // populate the map with random key-value pairs
         Random rand = new Random();

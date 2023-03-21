@@ -3,7 +3,7 @@ package RBTable;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class RBTreeHashTable<K extends Comparable<K>, V> extends Dictionary<K, V> {
+public class RedWriteLockHashTable<K extends Comparable<K>, V> extends Dictionary<K, V> {
     private RedBlackTree<K, V>[] table;
     private ReentrantReadWriteLock[] locks;
 
@@ -24,7 +24,7 @@ public class RBTreeHashTable<K extends Comparable<K>, V> extends Dictionary<K, V
         return this.nodeCnt == 0;
     }
 
-    public RBTreeHashTable(int cap) {
+    public RedWriteLockHashTable(int cap) {
         if (cap <= 0) {
             throw new IllegalArgumentException("Negative Capacity or zero" + cap);
         }
@@ -41,7 +41,7 @@ public class RBTreeHashTable<K extends Comparable<K>, V> extends Dictionary<K, V
         threshold = (int)Math.min(cap * loadFactor, MAX_ARRAY_SIZE + 1);
     }
 
-    public RBTreeHashTable() {
+    public RedWriteLockHashTable() {
         this(7);
     }
 
