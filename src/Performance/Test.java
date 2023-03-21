@@ -1,5 +1,7 @@
 package Performance;
 import RBTable.RedWriteLockHashTable;
+import RBTable.SynchronizedHashTable;
+import RBTable.WithoutRehashTable;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -9,8 +11,6 @@ public class Test {
     static double getDiscrepancy=0;
     static double putDiscrepancy=0;
     static double removeDiscrepancy=0;
-
-
     public static void HashTablePerformance(String[] args){
         // create a HashMap with a large initial capacity to avoid resizing during the test
         Hashtable<Integer, Integer> map = new Hashtable<>(1000000);
@@ -18,10 +18,15 @@ public class Test {
         // populate the map with random key-value pairs
         Random rand = new Random();
         long startTime1 = System.nanoTime();
+        System.gc();
+        Runtime runtime = Runtime.getRuntime();
+        long before=runtime.totalMemory() - runtime.freeMemory();
         for (int i = 0; i < 1000000; i++) {
             map.put(rand.nextInt(1000000), rand.nextInt(1000000));
 
         }
+        long after=runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " +(after-before));
         long endTime1 = System.nanoTime();
         putDiscrepancy-=(endTime1 - startTime1) / 1000000.0;
         System.out.println("Total Time taken(HashTable put function): " + (endTime1 - startTime1) / 1000000.0 + " milliseconds");
@@ -50,9 +55,15 @@ public class Test {
         // populate the map with random key-value pairs
         Random rand = new Random();
         long startTime1 = System.nanoTime();
+        System.gc();
+        Runtime runtime = Runtime.getRuntime();
+        long before=runtime.totalMemory() - runtime.freeMemory();
         for (int i = 0; i < 1000000; i++) {
             map.put(rand.nextInt(1000000), rand.nextInt(1000000));
+
         }
+        long after=runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " +(after-before));
         long endTime1 = System.nanoTime();
         putDiscrepancy+=(endTime1 - startTime1) / 1000000.0;
         System.out.println("Total Time taken(RBTable put function): " + (endTime1 - startTime1) / 1000000.0 + " milliseconds");
@@ -72,7 +83,84 @@ public class Test {
         }
         long endTime3 = System.nanoTime();
         removeDiscrepancy+=(endTime3 - startTime3) / 1000000.0;
+
         System.out.println("Total Time taken(RBTable remove function): " + (endTime3 - startTime3) / 1000000.0 + " milliseconds");
+    }
+    public static void SynchronizedTablePerformance(String[] args){
+        // create a HashMap with a large initial capacity to avoid resizing during the test
+        SynchronizedHashTable<Integer, Integer> map = new SynchronizedHashTable<>(1000000);
+
+        // populate the map with random key-value pairs
+        Random rand = new Random();
+        long startTime1 = System.nanoTime();
+        System.gc();
+        Runtime runtime = Runtime.getRuntime();
+        long before=runtime.totalMemory() - runtime.freeMemory();
+        for (int i = 0; i < 1000000; i++) {
+            map.put(rand.nextInt(1000000), rand.nextInt(1000000));
+
+        }
+        long after=runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " +(after-before));
+        long endTime1 = System.nanoTime();
+        putDiscrepancy+=(endTime1 - startTime1) / 1000000.0;
+        System.out.println("Total Time taken(SynchronizedTable put function): " + (endTime1 - startTime1) / 1000000.0 + " milliseconds");
+
+        // test the performance of the get function
+        long startTime2 = System.nanoTime();
+        for (int i = 0; i < 1000000; i++) {
+            map.get(rand.nextInt(1000000));
+        }
+        long endTime2 = System.nanoTime();
+        getDiscrepancy+=(endTime2 - startTime2) / 1000000.0;
+        System.out.println("Total Time taken(SynchronizedTable get function): " + (endTime2 - startTime2) / 1000000.0 + " milliseconds");
+
+        long startTime3 = System.nanoTime();
+        for (int i = 0; i < 1000000; i++) {
+            map.remove(rand.nextInt(1000000));
+        }
+        long endTime3 = System.nanoTime();
+        removeDiscrepancy+=(endTime3 - startTime3) / 1000000.0;
+
+        System.out.println("Total Time taken(SynchronizedTable remove function): " + (endTime3 - startTime3) / 1000000.0 + " milliseconds");
+    }
+    public static void WithoutRehashTablePerformance(String[] args){
+        // create a HashMap with a large initial capacity to avoid resizing during the test
+        WithoutRehashTable<Integer, Integer> map = new WithoutRehashTable<>(1000000);
+
+        // populate the map with random key-value pairs
+        Random rand = new Random();
+        long startTime1 = System.nanoTime();
+        System.gc();
+        Runtime runtime = Runtime.getRuntime();
+        long before=runtime.totalMemory() - runtime.freeMemory();
+        for (int i = 0; i < 1000000; i++) {
+            map.put(rand.nextInt(1000000), rand.nextInt(1000000));
+
+        }
+        long after=runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " +(after-before));
+        long endTime1 = System.nanoTime();
+        putDiscrepancy+=(endTime1 - startTime1) / 1000000.0;
+        System.out.println("Total Time taken(WithoutRehashTable put function): " + (endTime1 - startTime1) / 1000000.0 + " milliseconds");
+
+        // test the performance of the get function
+        long startTime2 = System.nanoTime();
+        for (int i = 0; i < 1000000; i++) {
+            map.get(rand.nextInt(1000000));
+        }
+        long endTime2 = System.nanoTime();
+        getDiscrepancy+=(endTime2 - startTime2) / 1000000.0;
+        System.out.println("Total Time taken(WithoutRehashTable get function): " + (endTime2 - startTime2) / 1000000.0 + " milliseconds");
+
+        long startTime3 = System.nanoTime();
+        for (int i = 0; i < 1000000; i++) {
+            map.remove(rand.nextInt(1000000));
+        }
+        long endTime3 = System.nanoTime();
+        removeDiscrepancy+=(endTime3 - startTime3) / 1000000.0;
+
+        System.out.println("Total Time taken(WithoutRehashTable remove function): " + (endTime3 - startTime3) / 1000000.0 + " milliseconds");
     }
     public static void ThreadSafetyPerformance(){
         final int THREAD_COUNT = 100;
@@ -111,6 +199,7 @@ public class Test {
         }
 
         // output the size of the map
+        // output the size of the map
         System.out.println("ideal Map size: " + TABLE_SIZE);
         System.out.println("actual Map size: " + map.size());
         System.out.println("safety loss : " + (TABLE_SIZE-map.size()));
@@ -126,7 +215,9 @@ public class Test {
             System.out.println("****************************************************************************************");
             System.out.println();
             HashTablePerformance(args);
-            RBTablePerformance(args);
+            //RBTablePerformance(args);
+            SynchronizedTablePerformance(args);
+            //WithoutRehashTablePerformance(args);
             System.out.println();
         }
         System.out.println("******************************Total Discrepancy:**********************************");
@@ -135,9 +226,9 @@ public class Test {
         System.out.println("Average Discrepancy of Remove() function: " + removeDiscrepancy/TEST_ROUND+ " milliseconds");
         System.out.println();
         System.out.println("******************************Testing the Thread Safety::**********************************");
-        ThreadSafetyPerformance();
 
-        HashMap<Integer, Integer> hashMap = new HashMap<>();
+
+        //ThreadSafetyPerformance();
     }
 }
 
